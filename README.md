@@ -4,7 +4,7 @@ Edukacyjny serwis małej przychodni: od żądania HTTP przez walidację, logikę
 Każdy mechanizm ma zastosowanie w kodzie, komentarz „co / jak / dlaczego” oraz test potwierdzający działanie.
 
 **Stos:** Java 21 · Spring Boot 4.1.2 (Spring Framework 7, Hibernate 7, Jackson 3) · H2 · Liquibase (YAML) ·
-MapStruct + Lombok · springdoc OpenAPI · JUnit Jupiter + Mockito + AssertJ. Dokładne wersje: [docs/versions.md](docs/versions.md).
+MapStruct + Lombok · springdoc OpenAPI · JUnit Jupiter + Mockito + AssertJ.
 
 ## Szybki start
 
@@ -50,18 +50,6 @@ Trzy miejsca szczególnie warte przeczytania:
    nakładającymi się INSERT-ami i jak blokada wiersza-rodzica to rozwiązuje (dowód: `SlotCreationConcurrencyIT`).
 2. **`GlobalExceptionHandler`** — jeden kontrakt błędu dla wyjątków frameworka, walidacji, domeny i bazy, bez wycieku danych.
 3. **Encje w `domain/`** — równość zgodna z proxy Hibernate, właściciel relacji, brak kaskad na współdzielonych encjach.
-
-## Dokumentacja projektu
-
-| Plik | Zawartość |
-|---|---|
-| [docs/implementation-plan.md](docs/implementation-plan.md) | Plan i kryteria odbioru |
-| [docs/coverage.md](docs/coverage.md) | Zagadnienie → implementacja → dowód → status |
-| [docs/decisions.md](docs/decisions.md) | Decyzje techniczne i odstępstwa |
-| [docs/progress.md](docs/progress.md) | Stan realizacji i ostatnia weryfikacja |
-| [docs/testing.md](docs/testing.md) | Rodzaje testów i ryzyka, które pokrywają |
-| [docs/persistence-alternatives.md](docs/persistence-alternatives.md) | JDBC, JdbcTemplate, Spring Data JDBC, JPA; Flyway kontra Liquibase |
-| [docs/labs/](docs/labs/README.md) | Katalog laboratoriów, Maven, transakcje i izolacja |
 
 ## Ograniczenia (świadome)
 
