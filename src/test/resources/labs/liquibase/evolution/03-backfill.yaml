@@ -1,0 +1,21 @@
+# MIGRATE: przepisanie istniejących danych do nowego formatu.
+# runAlways: w okresie zgodności każda kolejna migracja dociąga wiersze zapisane przez starą aplikację.
+# Warunek "phone_e164 is null" czyni krok idempotentnym - powtórzenie niczego nie psuje.
+# Po fazie contract ten changeset trzeba usunąć z mastera (lub oznaczyć precondition),
+# bo odwołuje się do kolumny phone, której już nie ma.
+databaseChangeLog:
+  - changeSet:
+      id: migrate-backfill-phone-e164
+      author: showcase
+      runAlways: true
+      changes:
+        - sql:
+            sql: >
+              update contacts
+              set phone_e164 = '+48' || replace(phone, ' ', '')
+              where phone_e164 is null and phone is not null
+      rollback:
+        - sql:
+            sql: update contacts set phone_e164 = null
+
+

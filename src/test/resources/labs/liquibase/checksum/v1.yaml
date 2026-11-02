@@ -1,0 +1,18 @@
+# Wersja 1 zastosowanego changesetu. logicalFilePath ustala tożsamość niezależnie od katalogu,
+# więc v2.yaml jest dla Liquibase "tym samym" changesetem (id + author + ścieżka logiczna).
+databaseChangeLog:
+  - changeSet:
+      id: create-lab-items
+      author: showcase
+      logicalFilePath: labs/checksum.yaml
+      changes:
+        - createTable:
+            tableName: lab_items
+            columns:
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+      rollback:
+        - dropTable:
+            tableName: lab_items
+

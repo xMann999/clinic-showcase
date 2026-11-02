@@ -1,0 +1,31 @@
+meta {
+  name: Visit in the past (400)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/visits
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "doctorId": {{doctorId}},
+    "dateTime": "2020-01-08T10:00:00",
+    "durationInMinutes": 30
+  }
+}
+
+docs {
+  Wymaga zmiennej doctorId - uruchom najpierw folder 01-scenario.
+}
+
+tests {
+  test("400 VISIT_IN_PAST", function() {
+    expect(res.status).to.equal(400);
+    expect(res.body.code).to.equal("VISIT_IN_PAST");
+  });
+}
+

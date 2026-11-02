@@ -1,0 +1,25 @@
+meta {
+  name: Booking the same slot again conflicts
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/users/{{userId}}/visits/{{visitId}}/booking
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "patientId": {{patientId}}
+  }
+}
+
+tests {
+  test("409 VISIT_ALREADY_BOOKED", function() {
+    expect(res.status).to.equal(409);
+    expect(res.body.code).to.equal("VISIT_ALREADY_BOOKED");
+  });
+}
+

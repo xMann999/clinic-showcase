@@ -1,0 +1,60 @@
+# Pierwszy, w pełni opisany changeset projektu.
+#
+# Co: tworzy tabelę patients - jeszcze bez powiązania z kontem użytkownika.
+# Jak: Liquibase wykonuje "changes" raz i zapisuje wiersz w DATABASECHANGELOG
+#      (id + author + ścieżka) wraz z checksumą znaczącej treści zmian.
+# Dlaczego osobno: historia pokazuje ewolucję modelu - konto (users) i klucz obcy
+#      dochodzą w 002. Na pustej bazie wynik jest ten sam, co przy jednym pliku,
+#      ale kursant widzi, jak dokłada się relację do istniejącej tabeli.
+#
+# Nazwy ograniczeń są jawne (pk_, uk_), bo obsługa błędów rozpoznaje naruszenie
+# UNIQUE po nazwie - nazwa wygenerowana przez bazę byłaby niestabilna.
+# Rollback createTable usuwa tabelę RAZEM Z DANYMI - to nie jest kopia zapasowa.
+databaseChangeLog:
+  - changeSet:
+      id: create-patients-table
+      author: showcase
+      changes:
+        - createTable:
+            tableName: patients
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_patients
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: id_card_no
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: birthday
+                  type: DATE
+                  constraints:
+                    nullable: false
+              # Telefon nie jest unikalny: rodzina może podać wspólny numer.
+              - column:
+                  name: phone_number
+                  type: VARCHAR(20)
+        - addUniqueConstraint:
+            tableName: patients
+            columnNames: id_card_no
+            constraintName: uk_patients_id_card_no
+      rollback:
+        - dropTable:
+            tableName: patients
+

@@ -1,0 +1,30 @@
+meta {
+  name: Create doctor account
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/users
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "doctor.{{runId}}@example.test",
+    "password": "Secret-123",
+    "role": "USER"
+  }
+}
+
+script:post-response {
+  bru.setVar("doctorUserId", res.body.id);
+}
+
+tests {
+  test("201 Created", function() {
+    expect(res.status).to.equal(201);
+  });
+}
+

@@ -1,0 +1,44 @@
+meta {
+  name: Create patient
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/patients
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "firstName": "Anna",
+    "lastName": "Nowak",
+    "idCardNo": "{{idCard}}",
+    "birthday": "1990-05-17",
+    "phoneNumber": "+48600700800",
+    "userId": {{userId}}
+  }
+}
+
+script:pre-request {
+  // Format dowodu: 3 litery + 6 cyfr; numer fikcyjny, inny przy każdym przebiegu.
+  const digits = String(Date.now()).slice(-6);
+  bru.setVar("idCard", "BRU" + digits);
+}
+
+script:post-response {
+  bru.setVar("patientId", res.body.id);
+  bru.setVar("patientLocation", res.headers["location"]);
+}
+
+tests {
+  test("201 Created", function() {
+    expect(res.status).to.equal(201);
+  });
+  test("document number is not part of the response", function() {
+    expect(res.body.idCardNo).to.equal(undefined);
+    expect(res.body.fullName).to.equal("Anna Nowak");
+  });
+}
+

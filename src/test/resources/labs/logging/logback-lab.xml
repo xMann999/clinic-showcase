@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Mała konfiguracja logback tylko dla laboratorium (aplikacja korzysta z domyślnej konfiguracji Boota
+  + application*.properties). W projekcie Spring Boot taki plik nazywa się zwykle logback-spring.xml,
+  co pozwala używać w nim profili (<springProfile>) i właściwości Springa.
+
+  - appender: DOKĄD trafia zdarzenie (konsola, plik, sieć);
+  - encoder: JAK jest zapisane (wzorzec tekstowy albo JSON);
+  - rolling policy: kiedy zacząć nowy plik i ile starych trzymać.
+-->
+<configuration>
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/lab.json</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/lab-%d{yyyy-MM-dd}.%i.json.gz</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>100MB</totalSizeCap>
+        </rollingPolicy>
+        <!-- JSON: jedno zdarzenie = jeden obiekt w linii; MDC (requestId) jako osobne pole. -->
+        <encoder class="ch.qos.logback.classic.encoder.JsonEncoder"/>
+    </appender>
+
+    <appender name="TEXT_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/lab.log</file>
+        <encoder>
+            <pattern>%d{ISO8601} %-5level [requestId=%X{requestId:-}] %logger{20} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="lab.clinic" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="JSON_FILE"/>
+        <appender-ref ref="TEXT_FILE"/>
+    </root>
+</configuration>
+

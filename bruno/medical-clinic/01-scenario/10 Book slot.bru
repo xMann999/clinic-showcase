@@ -1,0 +1,27 @@
+meta {
+  name: Book the slot
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/users/{{userId}}/visits/{{visitId}}/booking
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "patientId": {{patientId}}
+  }
+}
+
+tests {
+  test("201 Created with nested summary", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body.patient.fullName).to.equal("Anna Nowak");
+    expect(res.body.doctor.specialization).to.equal("Cardiology");
+    expect(res.headers["location"]).to.contain("/booking");
+  });
+}
+

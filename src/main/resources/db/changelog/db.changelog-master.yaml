@@ -1,0 +1,19 @@
+# Master changelog: kolejność wykonania wynika z kolejności "include", nie z wartości id.
+# Tożsamość changesetu w tabeli DATABASECHANGELOG to trójka: id + author + ścieżka pliku.
+# Zastosowanego pliku nie poprawiamy - każda zmiana schematu to nowy, kolejny plik.
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/001-create-patients-table.yaml
+  - include:
+      file: db/changelog/changes/002-create-users-and-fk.yaml
+  - include:
+      file: db/changelog/changes/003-create-patients-index.yaml
+  - include:
+      file: db/changelog/changes/004-create-doctors-and-facilities.yaml
+  - include:
+      file: db/changelog/changes/005-create-visits.yaml
+  - include:
+      file: db/changelog/changes/006-add-visit-version.yaml
+  - include:
+      file: db/changelog/changes/007-create-visits-doctor-datetime-index.yaml
+

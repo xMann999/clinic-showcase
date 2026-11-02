@@ -1,0 +1,37 @@
+# Dwa changesety do ćwiczenia rollbacku: cofamy je w odwrotnej kolejności.
+databaseChangeLog:
+  - changeSet:
+      id: create-lab-notes
+      author: showcase
+      changes:
+        - createTable:
+            tableName: lab_notes
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: text
+                  type: VARCHAR(100)
+      rollback:
+        # Uwaga: cofnięcie createTable usuwa tabelę RAZEM z danymi.
+        - dropTable:
+            tableName: lab_notes
+  - changeSet:
+      id: add-lab-notes-priority
+      author: showcase
+      changes:
+        - addColumn:
+            tableName: lab_notes
+            columns:
+              - column:
+                  name: priority
+                  type: INT
+      rollback:
+        - dropColumn:
+            tableName: lab_notes
+            columnName: priority
+

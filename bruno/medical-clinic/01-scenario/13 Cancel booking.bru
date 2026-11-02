@@ -1,0 +1,18 @@
+meta {
+  name: Cancel booking (idempotent)
+  type: http
+  seq: 13
+}
+
+delete {
+  url: {{baseUrl}}/api/users/{{userId}}/visits/{{visitId}}/booking
+  body: none
+  auth: none
+}
+
+tests {
+  test("204 No Content, empty body", function() {
+    expect(res.status).to.equal(204);
+  });
+}
+

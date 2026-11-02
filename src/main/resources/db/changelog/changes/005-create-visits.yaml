@@ -1,0 +1,59 @@
+# Wizyty (sloty). patient_id jest NULLABLE: brak pacjenta = wolny slot,
+# przypisanie pacjenta = rezerwacja. Osobnej tabeli "bookings" nie ma.
+# date_time to lokalny czas przychodni (Europe/Warsaw), bez offsetu.
+databaseChangeLog:
+  - changeSet:
+      id: create-visits-table
+      author: showcase
+      changes:
+        - createTable:
+            tableName: visits
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_visits
+                    nullable: false
+              - column:
+                  name: date_time
+                  type: TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: duration_in_minutes
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: doctor_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: patient_id
+                  type: BIGINT
+        - addForeignKeyConstraint:
+            baseTableName: visits
+            baseColumnNames: doctor_id
+            referencedTableName: doctors
+            referencedColumnNames: id
+            constraintName: fk_visits_doctor
+        - addForeignKeyConstraint:
+            baseTableName: visits
+            baseColumnNames: patient_id
+            referencedTableName: patients
+            referencedColumnNames: id
+            constraintName: fk_visits_patient
+        - createIndex:
+            tableName: visits
+            indexName: idx_visits_patient_id
+            columns:
+              - column:
+                  name: patient_id
+      rollback:
+        - dropTable:
+            tableName: visits
+

@@ -1,0 +1,27 @@
+meta {
+  name: Patient visits (query parameters)
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{baseUrl}}/api/visits?patientId={{patientId}}&page=0&size=10&sort=dateTime,asc
+  body: none
+  auth: none
+}
+
+params:query {
+  patientId: {{patientId}}
+  page: 0
+  size: 10
+  sort: dateTime,asc
+}
+
+tests {
+  test("200 with PageResponse", function() {
+    expect(res.status).to.equal(200);
+    expect(res.body.totalElements).to.equal(1);
+    expect(res.body.content[0].id).to.equal(bru.getVar("visitId"));
+  });
+}
+

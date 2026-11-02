@@ -1,0 +1,24 @@
+# Kolumna wersji dla blokowania optymistycznego (@Version w encji Visit).
+# Osobny changeset z jawnym backfillem: istniejące wiersze dostają 0
+# (defaultValueNumeric), dopiero potem kolumna może być NOT NULL.
+# @Version wykrywa równoległą zmianę TEGO SAMEGO wiersza; nie chroni przed
+# dwoma nowymi, nakładającymi się slotami - to robi blokada wiersza doktora.
+databaseChangeLog:
+  - changeSet:
+      id: add-visit-version
+      author: showcase
+      changes:
+        - addColumn:
+            tableName: visits
+            columns:
+              - column:
+                  name: version
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropColumn:
+            tableName: visits
+            columnName: version
+

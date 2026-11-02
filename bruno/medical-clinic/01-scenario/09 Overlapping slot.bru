@@ -1,0 +1,28 @@
+meta {
+  name: Overlapping slot is rejected
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/visits
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "doctorId": {{doctorId}},
+    "dateTime": "{{slotDate}}T10:15:00",
+    "durationInMinutes": 30
+  }
+}
+
+tests {
+  test("409 VISIT_OVERLAP", function() {
+    expect(res.status).to.equal(409);
+    expect(res.body.code).to.equal("VISIT_OVERLAP");
+    expect(res.body.errors).to.be.an("array");
+  });
+}
+

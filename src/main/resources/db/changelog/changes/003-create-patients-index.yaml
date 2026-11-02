@@ -1,0 +1,19 @@
+# Indeks wspiera dwa realne zapytania: "pacjenci danego konta" (user_id)
+# oraz sprawdzenie przed usunięciem konta, czy ma pacjentów.
+# H2 i większość baz NIE tworzy automatycznie indeksu na kolumnie klucza obcego.
+databaseChangeLog:
+  - changeSet:
+      id: create-patients-user-id-index
+      author: showcase
+      changes:
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_user_id
+            columns:
+              - column:
+                  name: user_id
+      rollback:
+        - dropIndex:
+            tableName: patients
+            indexName: idx_patients_user_id
+

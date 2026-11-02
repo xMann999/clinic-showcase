@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-contacts
+      author: showcase
+      changes:
+        - createTable:
+            tableName: contacts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+              - column:
+                  name: phone
+                  type: VARCHAR(30)
+      rollback:
+        - dropTable:
+            tableName: contacts
+

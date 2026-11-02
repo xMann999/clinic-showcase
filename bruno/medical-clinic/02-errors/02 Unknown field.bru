@@ -1,0 +1,28 @@
+meta {
+  name: Unknown JSON field (400)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/facilities
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "X",
+    "address": "Y",
+    "adress": "typo"
+  }
+}
+
+tests {
+  test("400 INVALID_REQUEST pointing to the unknown field", function() {
+    expect(res.status).to.equal(400);
+    expect(res.body.errors[0].field).to.equal("adress");
+    expect(res.body.errors[0].code).to.equal("UNKNOWN_FIELD");
+  });
+}
+

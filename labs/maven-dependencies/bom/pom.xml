@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  BOM (Bill of Materials): pom z samym dependencyManagement. Nie dodaje żadnej biblioteki
+  do projektu - tylko ustala wersję, JEŚLI projekt (lub jego zależność) danej biblioteki użyje.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>lab.maven</groupId>
+    <artifactId>lab-bom</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>lab.maven</groupId>
+                <artifactId>common</artifactId>
+                <version>2.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
+

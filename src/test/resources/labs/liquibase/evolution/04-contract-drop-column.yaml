@@ -1,0 +1,23 @@
+# CONTRACT: stara kolumna znika dopiero po spełnieniu kryterium - żaden wiersz nie może
+# mieć starej wartości bez nowej. W przeciwnym razie HALT: migracja przerywa się bez zmian.
+databaseChangeLog:
+  - changeSet:
+      id: contract-drop-phone
+      author: showcase
+      preConditions:
+        - onFail: HALT
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from contacts where phone is not null and phone_e164 is null
+      changes:
+        - dropColumn:
+            tableName: contacts
+            columnName: phone
+      rollback:
+        - addColumn:
+            tableName: contacts
+            columns:
+              - column:
+                  name: phone
+                  type: VARCHAR(30)
+

@@ -1,0 +1,33 @@
+meta {
+  name: Create doctor with two facilities
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/doctors
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "firstName": "Jan",
+    "lastName": "Kowalski",
+    "specialization": "Cardiology",
+    "userId": {{doctorUserId}},
+    "facilityIds": [{{facilityNorthId}}, {{facilitySouthId}}]
+  }
+}
+
+script:post-response {
+  bru.setVar("doctorId", res.body.id);
+}
+
+tests {
+  test("201 Created with both facilities", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body.facilities.length).to.equal(2);
+  });
+}
+

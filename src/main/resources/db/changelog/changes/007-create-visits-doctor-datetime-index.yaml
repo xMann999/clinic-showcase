@@ -1,0 +1,21 @@
+# Indeks złożony pod najczęstsze zapytanie domeny: "sloty doktora X w dniu D"
+# (WHERE doctor_id = ? AND date_time >= ? AND date_time < ?).
+# Kolejność kolumn ma znaczenie: równość na doctor_id, potem zakres na date_time.
+databaseChangeLog:
+  - changeSet:
+      id: create-visits-doctor-datetime-index
+      author: showcase
+      changes:
+        - createIndex:
+            tableName: visits
+            indexName: idx_visits_doctor_id_date_time
+            columns:
+              - column:
+                  name: doctor_id
+              - column:
+                  name: date_time
+      rollback:
+        - dropIndex:
+            tableName: visits
+            indexName: idx_visits_doctor_id_date_time
+

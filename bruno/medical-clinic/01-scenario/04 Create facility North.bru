@@ -1,0 +1,29 @@
+meta {
+  name: Create facilities
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/facilities
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Clinic North",
+    "address": "ul. Prosta 1, Warszawa"
+  }
+}
+
+script:post-response {
+  bru.setVar("facilityNorthId", res.body.id);
+}
+
+tests {
+  test("201 Created", function() {
+    expect(res.status).to.equal(201);
+  });
+}
+

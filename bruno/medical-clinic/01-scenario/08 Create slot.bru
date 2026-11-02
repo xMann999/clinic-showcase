@@ -1,0 +1,39 @@
+meta {
+  name: Create free slot tomorrow 10:00
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/visits
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "doctorId": {{doctorId}},
+    "dateTime": "{{slotDate}}T10:00:00",
+    "durationInMinutes": 30
+  }
+}
+
+script:pre-request {
+  // Termin to LOKALNY czas przychodni (Europe/Warsaw) bez offsetu. Bierzemy datę za 2 dni,
+  // aby slot był w przyszłości niezależnie od strefy komputera, na którym działa Bruno.
+  const date = new Date(Date.now() + 2 * 24 * 3600 * 1000);
+  const pad = (n) => String(n).padStart(2, "0");
+  bru.setVar("slotDate", date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate()));
+}
+
+script:post-response {
+  bru.setVar("visitId", res.body.id);
+}
+
+tests {
+  test("201 Created, free slot", function() {
+    expect(res.status).to.equal(201);
+    expect(res.body.patientId).to.equal(undefined);
+  });
+}
+

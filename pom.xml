@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!--
+		Parent POM: dziedziczymy konfigurację pluginów i - przede wszystkim - BOM
+		(spring-boot-dependencies). Dzięki temu Spring Framework, Hibernate, Jackson,
+		Liquibase, JUnit i Mockito mają wersje dobrane i przetestowane razem przez zespół Boota.
+		Nie podajemy więc <version> przy zależnościach zarządzanych - nadpisanie jednej
+		biblioteki "na wyczucie" jest najczęstszą przyczyną NoSuchMethodError w runtime.
+	-->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.1.2</version>
+		<relativePath/>
+	</parent>
+
+	<!-- GAV: groupId + artifactId + version jednoznacznie identyfikują artefakt w repozytorium. -->
+	<groupId>com.example</groupId>
+	<artifactId>clinic-showcase</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Medical Clinic Showcase</name>
+	<description>Educational Spring Boot 4.1.2 project: HTTP, validation, JPA, transactions and concurrency in a small clinic domain.</description>
+
+	<properties>
+		<!-- Parent przekazuje tę wartość do maven-compiler-plugin jako release=21. -->
+		<java.version>21</java.version>
+		<!-- Biblioteki spoza BOM Boota: wersje przypinamy jawnie. -->
+		<mapstruct.version>1.6.3</mapstruct.version>
+		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+		<!-- springdoc 3.1.x jest budowany na Spring Boot 4.1 (linia 2.x dotyczy Boot 3). -->
+		<springdoc-openapi.version>3.1.1</springdoc-openapi.version>
+		<vavr.version>0.10.4</vavr.version>
+	</properties>
+
+	<dependencies>
+		<!-- HTTP: Spring MVC na wbudowanym Tomcacie. Bez WebFlux. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-liquibase</artifactId>
+		</dependency>
+		<!-- Spring AOP + AspectJ weaver (w Boot 4 starter nazywa się "aspectj"). -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aspectj</artifactId>
+		</dependency>
+		<!-- Konsola H2 w profilu local (w Boot 4 osobny moduł). -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-h2console</artifactId>
+		</dependency>
+
+		<!-- scope runtime: sterownik jest potrzebny w działającej aplikacji, ale kod go nie importuje. -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Tylko hashowanie haseł; bez filtrów Spring Security i modułu logowania. -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+		</dependency>
+
+		<!-- optional: Lombok jest potrzebny tylko podczas kompilacji, nie trafia do JAR-a. -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc-openapi.version}</version>
+		</dependency>
+
+		<!-- scope test: dostępne wyłącznie na classpath testów. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.vavr</groupId>
+			<artifactId>vavr</artifactId>
+			<version>${vavr.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!--
+			Procesor MapStruct jako zwykły JAR testowy: laboratorium kompiluje w locie celowo
+			niekompletny mapper i sprawdza błąd kompilacji. Nie wpływa na budowanie aplikacji -
+			kompilator Mavena bierze procesory wyłącznie z annotationProcessorPaths.
+		-->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${mapstruct.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!--
+				Procesory adnotacji: Lombok generuje gettery/konstruktory, MapStruct generuje *MapperImpl.
+				lombok-mapstruct-binding informuje MapStruct, że ma poczekać na Lomboka.
+				Sama kolejność wpisów na liście NIE jest gwarancją kolejności przetwarzania.
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-mapstruct-binding</artifactId>
+							<version>${lombok-mapstruct-binding.version}</version>
+						</path>
+					</annotationProcessorPaths>
+					<compilerArgs>
+						<!-- Nowe, niezmapowane pole w DTO kończy się błędem kompilacji, a nie cichym null. -->
+						<arg>-Amapstruct.unmappedTargetPolicy=ERROR</arg>
+					</compilerArgs>
+				</configuration>
+			</plugin>
+
+			<!--
+				dependency:properties udostępnia ścieżkę JAR-a każdej zależności jako właściwość
+				(np. ${org.mockito:mockito-core:jar}). Mockito potrzebuje agenta JVM do mockowania
+				klas; nowe JDK nie pozwalają mu już dołączać się samodzielnie w trakcie działania.
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>properties</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>-javaagent:${org.mockito:mockito-core:jar} -Xshare:off</argLine>
+				</configuration>
+			</plugin>
+
+			<!-- Failsafe: klasy *IT w fazach integration-test/verify (współbieżność, prawdziwy port). -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<argLine>-javaagent:${org.mockito:mockito-core:jar} -Xshare:off</argLine>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.hubspot.maven.plugins</groupId>
+				<artifactId>prettier-maven-plugin</artifactId>
+				<version>0.22</version>
+				<configuration>
+					<prettierJavaVersion>2.6.4</prettierJavaVersion>
+					<printWidth>120</printWidth>
+					<tabWidth>4</tabWidth>
+					<useTabs>false</useTabs>
+					<ignoreConfigFile>true</ignoreConfigFile>
+					<ignoreEditorConfig>true</ignoreEditorConfig>
+					<inputGlobs>
+						<!-- These are the default patterns, you can omit <inputGlobs> entirely unless you want to override them -->
+						<inputGlob>src/main/java/**/*.java</inputGlob>
+						<inputGlob>src/test/java/**/*.java</inputGlob>
+					</inputGlobs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+

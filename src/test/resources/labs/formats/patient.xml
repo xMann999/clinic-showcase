@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Ten sam pacjent w XML: elementy, atrybuty i encje (&quot;) zamiast backslasha. -->
+<patient active="true" visits="3">
+    <firstName>Anna</firstName>
+    <lastName>Nowak &quot;Ania&quot;</lastName>
+    <address>
+        <street>ul. Prosta 1</street>
+        <city>Warszawa</city>
+    </address>
+    <phones>
+        <phone>+48600700800</phone>
+        <phone>+48221234567</phone>
+    </phones>
+</patient>
+

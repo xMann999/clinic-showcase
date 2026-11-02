@@ -1,0 +1,20 @@
+meta {
+  name: Missing resource (404)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/patients/999999999
+  body: none
+  auth: none
+}
+
+tests {
+  test("404 PATIENT_NOT_FOUND", function() {
+    expect(res.status).to.equal(404);
+    expect(res.body.code).to.equal("PATIENT_NOT_FOUND");
+    expect(res.body.path).to.equal("/api/patients/999999999");
+  });
+}
+

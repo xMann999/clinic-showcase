@@ -1,0 +1,18 @@
+meta {
+  name: Delete free slot
+  type: http
+  seq: 14
+}
+
+delete {
+  url: {{baseUrl}}/api/visits/{{visitId}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("204 after cancellation the slot is free and deletable", function() {
+    expect(res.status).to.equal(204);
+  });
+}
+

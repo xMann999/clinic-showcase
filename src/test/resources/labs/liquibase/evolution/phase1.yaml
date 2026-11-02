@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: labs/liquibase/evolution/01-create-contacts.yaml
+

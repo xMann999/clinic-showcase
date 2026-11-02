@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Aplikacja widzi common DWA razy: app -> lib-a -> common 1.0 (głębokość 2)
+  oraz app -> lib-b -> lib-c -> common 2.0 (głębokość 3).
+  "Nearest wins": Maven wybiera BLIŻSZĄ deklarację (1.0), a nie najnowszą wersję.
+  Profile pokazują trzy sposoby zmiany wyniku:
+    -Pdirect   : bezpośrednia deklaracja common 2.0 w aplikacji (głębokość 1),
+    -Pexclude  : wykluczenie common z lib-a (zostaje tylko ścieżka przez lib-b),
+    -Pbom      : import BOM w dependencyManagement (zarządzana wersja dla całego drzewa).
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>lab.maven</groupId>
+    <artifactId>app</artifactId>
+    <version>1.0</version>
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>lab.maven</groupId>
+            <artifactId>lib-a</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>lab.maven</groupId>
+            <artifactId>lib-b</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>direct</id>
+            <dependencies>
+                <dependency>
+                    <groupId>lab.maven</groupId>
+                    <artifactId>common</artifactId>
+                    <version>2.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>exclude</id>
+            <dependencies>
+                <!-- Ta sama zależność z wykluczeniem nadpisuje deklarację z głównej sekcji. -->
+                <dependency>
+                    <groupId>lab.maven</groupId>
+                    <artifactId>lib-a</artifactId>
+                    <version>1.0</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>lab.maven</groupId>
+                            <artifactId>common</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>bom</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>lab.maven</groupId>
+                        <artifactId>lab-bom</artifactId>
+                        <version>1.0</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+    </profiles>
+</project>
+

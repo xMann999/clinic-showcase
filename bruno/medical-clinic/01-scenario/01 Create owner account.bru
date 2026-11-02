@@ -1,0 +1,47 @@
+meta {
+  name: Create owner account
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/users
+  body: json
+  auth: none
+}
+
+headers {
+  X-Request-Id: bruno-scenario-0001
+}
+
+body:json {
+  {
+    "email": "owner.{{runId}}@example.test",
+    "password": "Secret-123",
+    "role": "USER"
+  }
+}
+
+script:pre-request {
+  // Unikalny przyrostek - scenariusz można powtarzać na tej samej bazie bez konfliktu e-maili.
+  bru.setVar("runId", Date.now().toString());
+}
+
+script:post-response {
+  bru.setVar("userId", res.body.id);
+}
+
+tests {
+  test("201 Created + Location", function() {
+    expect(res.status).to.equal(201);
+    expect(res.headers["location"]).to.contain("/api/users/" + res.body.id);
+  });
+  test("password never returned", function() {
+    expect(res.body.password).to.equal(undefined);
+    expect(res.body.passwordHash).to.equal(undefined);
+  });
+  test("requestId echoed", function() {
+    expect(res.headers["x-request-id"]).to.equal("bruno-scenario-0001");
+  });
+}
+

@@ -1,0 +1,17 @@
+# EXPAND: nowa kolumna jest NULLABLE - stara aplikacja nie musi o niej wiedzieć.
+databaseChangeLog:
+  - changeSet:
+      id: expand-add-phone-e164
+      author: showcase
+      changes:
+        - addColumn:
+            tableName: contacts
+            columns:
+              - column:
+                  name: phone_e164
+                  type: VARCHAR(16)
+      rollback:
+        - dropColumn:
+            tableName: contacts
+            columnName: phone_e164
+

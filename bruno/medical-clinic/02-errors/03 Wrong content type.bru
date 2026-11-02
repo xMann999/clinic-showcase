@@ -1,0 +1,23 @@
+meta {
+  name: Wrong Content-Type (415)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/facilities
+  body: text
+  auth: none
+}
+
+body:text {
+  name=X
+}
+
+tests {
+  test("415 UNSUPPORTED_MEDIA_TYPE", function() {
+    expect(res.status).to.equal(415);
+    expect(res.body.code).to.equal("UNSUPPORTED_MEDIA_TYPE");
+  });
+}
+

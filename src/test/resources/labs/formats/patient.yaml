@@ -1,0 +1,12 @@
+# Ten sam pacjent w YAML: struktura wynika z wcięć, listy zaczynają się od "-".
+firstName: Anna
+lastName: 'Nowak "Ania"'
+address:
+  street: ul. Prosta 1
+  city: Warszawa
+phones:
+  - "+48600700800"
+  - "+48221234567"
+active: true
+visits: 3
+

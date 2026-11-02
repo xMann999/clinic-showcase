@@ -1,0 +1,71 @@
+# Konto użytkownika oraz relacja N:1 patients.user_id -> users.id.
+# Kolumna user_id jest NOT NULL: pacjent zawsze należy do konta.
+# Uwaga: to historia na PUSTEJ bazie. Dodanie kolumny NOT NULL do tabeli z danymi
+# wymagałoby backfillu (patrz laboratorium expand/contract).
+databaseChangeLog:
+  - changeSet:
+      id: create-users-table
+      author: showcase
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                    nullable: false
+              # E-mail zapisujemy po normalizacji (strip + lower-case), więc UNIQUE
+              # działa na tej reprezentacji.
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password_hash
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: email
+            constraintName: uk_users_email
+      rollback:
+        - dropTable:
+            tableName: users
+  - changeSet:
+      id: add-patients-user-fk
+      author: showcase
+      changes:
+        - addColumn:
+            tableName: patients
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        # Brak ON DELETE CASCADE: konta z pacjentami nie da się usunąć,
+        # baza odrzuci DELETE nawet wtedy, gdy ktoś pominie sprawdzenie w serwisie.
+        - addForeignKeyConstraint:
+            baseTableName: patients
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_patients_user
+      rollback:
+        - dropForeignKeyConstraint:
+            baseTableName: patients
+            constraintName: fk_patients_user
+        - dropColumn:
+            tableName: patients
+            columnName: user_id

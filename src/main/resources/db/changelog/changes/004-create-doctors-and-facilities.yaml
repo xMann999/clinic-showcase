@@ -1,0 +1,129 @@
+# Doktorzy (1:1 z kontem), placówki i tabela łącząca M:N.
+#
+# doctors.user_id: NOT NULL + UNIQUE + FK - jedno konto może należeć najwyżej do
+# jednego doktora. UNIQUE broni reguły także przed wyścigiem dwóch równoległych
+# żądań, których wstępne sprawdzenie w serwisie przeszło jednocześnie.
+#
+# doctor_facility: złożony klucz główny (doctor_id, facility_id) = unikalna para.
+databaseChangeLog:
+  - changeSet:
+      id: create-doctors-table
+      author: showcase
+      changes:
+        - createTable:
+            tableName: doctors
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_doctors
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: specialization
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: doctors
+            columnNames: user_id
+            constraintName: uk_doctors_user_id
+        - addForeignKeyConstraint:
+            baseTableName: doctors
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_doctors_user
+      rollback:
+        - dropTable:
+            tableName: doctors
+  - changeSet:
+      id: create-facilities-table
+      author: showcase
+      changes:
+        - createTable:
+            tableName: facilities
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_facilities
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: VARCHAR(300)
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: facilities
+  - changeSet:
+      id: create-doctor-facility-table
+      author: showcase
+      changes:
+        - createTable:
+            tableName: doctor_facility
+            columns:
+              - column:
+                  name: doctor_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: facility_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: doctor_facility
+            columnNames: doctor_id, facility_id
+            constraintName: pk_doctor_facility
+        - addForeignKeyConstraint:
+            baseTableName: doctor_facility
+            baseColumnNames: doctor_id
+            referencedTableName: doctors
+            referencedColumnNames: id
+            constraintName: fk_doctor_facility_doctor
+        - addForeignKeyConstraint:
+            baseTableName: doctor_facility
+            baseColumnNames: facility_id
+            referencedTableName: facilities
+            referencedColumnNames: id
+            constraintName: fk_doctor_facility_facility
+        # PK zaczyna się od doctor_id; zapytania "doktorzy placówki" potrzebują
+        # osobnego indeksu prowadzonego przez facility_id.
+        - createIndex:
+            tableName: doctor_facility
+            indexName: idx_doctor_facility_facility_id
+            columns:
+              - column:
+                  name: facility_id
+      rollback:
+        - dropTable:
+            tableName: doctor_facility
+

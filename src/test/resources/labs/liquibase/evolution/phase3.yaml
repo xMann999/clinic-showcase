@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: labs/liquibase/evolution/01-create-contacts.yaml
+  - include:
+      file: labs/liquibase/evolution/02-expand-add-column.yaml
+  - include:
+      file: labs/liquibase/evolution/03-backfill.yaml
+  - include:
+      file: labs/liquibase/evolution/04-contract-drop-column.yaml
+

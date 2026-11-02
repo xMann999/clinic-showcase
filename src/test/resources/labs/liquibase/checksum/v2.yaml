@@ -1,0 +1,18 @@
+# "Poprawiony" po fakcie changeset: ta sama tożsamość, inna treść (VARCHAR(100)).
+# Liquibase wykrywa niezgodny checksum i przerywa - poprawka powinna być NOWYM changesetem.
+databaseChangeLog:
+  - changeSet:
+      id: create-lab-items
+      author: showcase
+      logicalFilePath: labs/checksum.yaml
+      changes:
+        - createTable:
+            tableName: lab_items
+            columns:
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+      rollback:
+        - dropTable:
+            tableName: lab_items
+

@@ -1,0 +1,29 @@
+meta {
+  name: Create facility South
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/facilities
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Clinic South",
+    "address": "ul. Krzywa 2, Warszawa"
+  }
+}
+
+script:post-response {
+  bru.setVar("facilitySouthId", res.body.id);
+}
+
+tests {
+  test("201 Created", function() {
+    expect(res.status).to.equal(201);
+  });
+}
+

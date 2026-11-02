@@ -1,0 +1,30 @@
+meta {
+  name: Validation error (400)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/patients
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "firstName": "",
+    "lastName": "Nowak",
+    "idCardNo": "123",
+    "birthday": "2999-01-01",
+    "userId": 1
+  }
+}
+
+tests {
+  test("400 VALIDATION_FAILED with field list", function() {
+    expect(res.status).to.equal(400);
+    expect(res.body.code).to.equal("VALIDATION_FAILED");
+    expect(res.body.errors.map(e => e.field)).to.include.members(["birthday", "firstName", "idCardNo"]);
+  });
+}
+
